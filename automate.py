@@ -2,37 +2,47 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-participant_choice = input("Choisissez un nombre entre 0 et 100 : ")
+row_number = input("Longueur : choisissez un nombre entre 0 et 1000 : ")
 
-size_array = int(participant_choice)
+col_number = input("Largeur : choisissez un nombre entre 0 et 10000 : ")
 
-line = np.zeros((size_array), dtype = np.int16)
+width = int(row_number)
 
-center =  line.size // 2
+lenght = int(row_number)
 
-line[center] = 1
+pop = np.zeros((lenght), dtype = np.int32)
 
-new_line = np.zeros((size_array), dtype = np.int16)
+center =  pop.size // 2
 
-print(line)
+pop[center] = 1
 
-iteration = 0
+new_population = np.zeros((lenght), dtype = np.int32)
 
-while iteration < 5:
-    for i in range(1, len(line)- 1):
-        if line[i - 1] == 1 and line[i] == 1 and line[i + 1] == 0:
-            new_line[i] = 1
-        elif line[i - 1] == 1 and line[i] == 0 and line[i + 1] == 1:
-            new_line[i] = 1
-        elif line[i - 1] == 0 and line[i] == 1 and line[i + 1] == 1:
-            new_line[i] = 1
-        elif line[i - 1] == 0 and line[i] == 1 and line[i + 1] == 0:
-            new_line[i] = 1
-        elif line[i - 1] == 0 and line[i] == 0 and line[i + 1] == 1:
-            new_line[i] = 1
-    print(new_line)
-    iteration =+ 1
-    line = new_line
+def next_generation_110(pop):
+    new_population = np.zeros((len(pop)), dtype = np.int32)
+    for i in range(1, len(pop)-1):
+        if pop[i - 1] == 1 and pop[i] == 1 and pop[i + 1] == 1:
+            new_population[i] = 0
+        elif pop[i - 1] == 1 and pop[i] == 0 and pop[i + 1] == 0:
+            new_population[i] = 0
+        elif pop[i - 1] == 0 and pop[i] == 0 and pop[i + 1] == 0:
+            new_population[i] = 0
+        else:
+            new_population[i] = 1
+    return new_population
 
-#plt.imshow(matrice)
-#plt.show()
+def create_board(n_rows, n_cols):
+    start = np.zeros(n_cols, dtype = np.int32)
+    start[n_cols // 2] = 1
+    board = np.zeros((n_rows, n_cols), dtype = np.int32)
+    board[0,:] = start
+    for i in range(n_rows - 1):
+        current_pop = board[i , :]
+        board[i + 1, :] = next_generation_110(current_pop)
+    return board
+
+automate = create_board(width, lenght)
+
+plt.imshow(automate, cmap = "hot")
+plt.show()
+plt.imsave('Rule_110.png', automate, dpi = 200)
